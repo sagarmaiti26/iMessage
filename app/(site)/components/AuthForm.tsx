@@ -1,20 +1,23 @@
 "use client";
-import React, { useCallback, useState } from 'react'
+import axios from 'axios';
+import React, { useCallback, useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
-import { PassThrough } from 'stream';
 import Input from './inputs/input';
 import Button from './Button';
 import AuthSocialButton from './AuthSocialButton';
 import { BsGithub, BsGoogle } from 'react-icons/bs';
+import {toast} from 'react-hot-toast';
+import { signIn } from 'next-auth/react';
+
 type Variant = 'LOGIN' | 'REGISTER'
 const AuthForm = () => {
-  const [variant, setVarint] = useState<Variant>('LOGIN');
+  const [variant, setVariant] = useState<Variant>('LOGIN');
   const [isLoading, setIsLoading] = useState(false);
   const toggleVariant = useCallback(() => {
     if (variant == 'LOGIN') {
-      setVarint('REGISTER');
+      setVariant('REGISTER');
     } else {
-      setVarint('LOGIN');
+      setVariant('LOGIN');
     }
   }, [variant])
   const { register, handleSubmit, formState: {
@@ -28,22 +31,39 @@ const AuthForm = () => {
   })
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setIsLoading(true);
-    if (variant == 'REGISTER') {
-      // Axios reg
+    if (variant === 'REGISTER') {
+    axios.post('/api/register',data)
+    .catch(()=>toast.error('Something Went Wrong!'))
+    .finally(()=>{setIsLoading(false)})
     }
-    if (variant == 'LOGIN') {
-      //next auth signin
+    if (variant === 'LOGIN') {
+signIn('credentials',{
+  ...data,
+  redirect:false
+})
+.then((callback)=>{
+  if(callback?.error){
+    toast.error("Invalid Credentials")
+  }
+  if(callback?.ok && !callback?.error){
+    toast.success("Logged In");
+  }
+})
+  .finally(()=>setIsLoading(false))
+
     }
   }
   const socialAction = (action: String) => {
     setIsLoading(true);
+
     //next auth social sign in
+    
   }
   return (
     <div className='mt-8 sm:mx-auto sm:w-full sm:max-w-md'>
       <div className='bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10'>
         <form className='space-y-6 ' onSubmit={handleSubmit(onSubmit)}>
-          {variant === 'REGISTER' && (<Input type='' errors={errors} label="Name" register={register} id='name' disabled={isLoading} />)}
+          {variant === 'REGISTER' && (<Input type='text' errors={errors} label="Name" register={register} id='name' disabled={isLoading} />)}
           <Input type='email' errors={errors} label="Email" register={register} id='email' disabled={isLoading} />
           <Input type='password' errors={errors} label="Password" register={register} id='password' disabled={isLoading} />
           <div>
