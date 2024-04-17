@@ -1,18 +1,28 @@
 "use client";
 import axios from 'axios';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
-import Input from './inputs/input';
-import Button from './Button';
+import Input from '../../components/inputs/input';
+import Button from '../../components/Button';
 import AuthSocialButton from './AuthSocialButton';
 import { BsGithub, BsGoogle } from 'react-icons/bs';
-import {toast} from 'react-hot-toast';
-import { signIn } from 'next-auth/react';
+import { toast } from 'react-hot-toast';
+import { signIn, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 type Variant = 'LOGIN' | 'REGISTER'
 const AuthForm = () => {
+  const session = useSession();
+  const router = useRouter();
   const [variant, setVariant] = useState<Variant>('LOGIN');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (session?.status == 'authenticated') {
+      router.push('/users')
+    }
+  }, [session?.status, router])
+
   const toggleVariant = useCallback(() => {
     if (variant == 'LOGIN') {
       setVariant('REGISTER');
@@ -32,32 +42,44 @@ const AuthForm = () => {
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setIsLoading(true);
     if (variant === 'REGISTER') {
-    axios.post('/api/register',data)
-    .catch(()=>toast.error('Something Went Wrong!'))
-    .finally(()=>{setIsLoading(false)})
+      axios.post('/api/register', data)
+        .then(() => signIn('credentials', data))
+        .catch(() => toast.error('Something Went Wrong!'))
+        .finally(() => { setIsLoading(false) })
     }
     if (variant === 'LOGIN') {
-signIn('credentials',{
-  ...data,
-  redirect:false
-})
-.then((callback)=>{
-  if(callback?.error){
-    toast.error("Invalid Credentials")
-  }
-  if(callback?.ok && !callback?.error){
-    toast.success("Logged In");
-  }
-})
-  .finally(()=>setIsLoading(false))
+      signIn('credentials', {
+        ...data,
+        redirect: false
+      })
+        .then((callback) => {
+          if (callback?.error) {
+            toast.error("Invalid Credentials")
+          }
+          if (callback?.ok && !callback?.error) {
+            toast.success("Logged In");
+            router.push('/users')
+          }
+        })
+        .finally(() => setIsLoading(false))
 
     }
   }
-  const socialAction = (action: String) => {
+  const socialAction = (action: string) => {
     setIsLoading(true);
 
-    //next auth social sign in
-    
+    signIn(action, { redirect: false })
+      .then((callback) => {
+        if (callback?.error) {
+          toast.error('Invalid Credentials')
+        }
+        if (callback?.ok && !callback?.error) {
+          toast.success('Logged In');
+
+        }
+      })
+      .finally(() => setIsLoading(false))
+
   }
   return (
     <div className='mt-8 sm:mx-auto sm:w-full sm:max-w-md'>
@@ -99,8 +121,8 @@ signIn('credentials',{
 
         </div>
         <div className='flex gap-2 justify-center text-sm mt-6 px-2 text-gray-500'>
-          <div>{variant==='LOGIN'?'New to Messenger':'Already have an Account'}</div>
-          <div onClick={toggleVariant} className='underline cursor-pointer'>{variant==='LOGIN'?'Create an  account':'Sign In'}</div>
+          <div>{variant === 'LOGIN' ? 'New to Messenger' : 'Already have an Account'}</div>
+          <div onClick={toggleVariant} className='underline cursor-pointer'>{variant === 'LOGIN' ? 'Create an  account' : 'Sign In'}</div>
         </div>
       </div>
 
