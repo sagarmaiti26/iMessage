@@ -13,6 +13,9 @@ export default async function ConversationLayout({
         <div className="h-full ">
             <ConversationList initialItems={conversations}/>
             {children}</div>
+
+
+            
        </Sidebar>
     )
 }
