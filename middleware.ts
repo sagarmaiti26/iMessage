@@ -6,5 +6,5 @@ import { withAuth } from "next-auth/middleware";
         signIn:"/"
     }
 });
-export const config = { matcher: ["/users/:path*"] };
+export const config = { matcher: ["/users/:path*","/conversations/:path*"] };
 
