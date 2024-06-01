@@ -121,7 +121,7 @@ const AuthForm = () => {
 
         </div>
         <div className='flex gap-2 justify-center text-sm mt-6 px-2 text-gray-500'>
-          <div>{variant === 'LOGIN' ? 'New to Messenger' : 'Already have an Account'}</div>
+          <div>{variant === 'LOGIN' ? 'New to iMessage' : 'Already have an Account'}</div>
           <div onClick={toggleVariant} className='underline cursor-pointer'>{variant === 'LOGIN' ? 'Create an  account' : 'Sign In'}</div>
         </div>
       </div>

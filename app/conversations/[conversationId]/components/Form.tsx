@@ -33,7 +33,7 @@ axios.post('/api/messages',{
         onSuccess={handleUpload}
         uploadPreset="uequnasd"
       > 
-            <HiPhoto size={30} className='text-sky-500' />
+            <HiPhoto size={30} className='text-green-500' />
             </CldUploadButton>
            
             <form onSubmit={handleSubmit(onSubmit)} className='flex items-center gap-2 lg:gap-4 w-full'>
@@ -46,7 +46,7 @@ axios.post('/api/messages',{
                 
                 <button
                     type='submit'
-                    className='rounded-full p-2 bg-sky-500 cursor-pointer hover:bg-sky-600 transition'>
+                    className='rounded-full p-2 bg-green-500 cursor-pointer hover:bg-green-600 transition'>
                     <HiPaperAirplane className='text-white' size={18}/>
                 </button>
             </form>
