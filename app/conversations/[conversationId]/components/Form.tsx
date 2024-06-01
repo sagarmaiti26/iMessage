@@ -30,7 +30,7 @@ axios.post('/api/messages',{
         <div className='py-4 px-4 bg-white border-t flex items-center lg:gap-4 w-full'>
         <CldUploadButton
         options={{ maxFiles: 1 }}
-        onUpload={handleUpload}
+        onSuccess={handleUpload}
         uploadPreset="uequnasd"
       > 
             <HiPhoto size={30} className='text-sky-500' />
@@ -43,7 +43,7 @@ axios.post('/api/messages',{
                     errors={errors}
                     required
                     placeholder="Write a message" />
-                {/* YESTERDAY */}
+                
                 <button
                     type='submit'
                     className='rounded-full p-2 bg-sky-500 cursor-pointer hover:bg-sky-600 transition'>

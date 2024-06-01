@@ -7,6 +7,9 @@ import { format } from "date-fns";
 import { Dialog, DialogPanel, Transition, TransitionChild } from "@headlessui/react";
 import { IoClose, IoTrash } from "react-icons/io5";
 import Avatar from "@/app/components/Avatar";
+import Modal from "@/app/components/Modal";
+import ConfirmModal from "./ConfirmModal";
+import AvatarGroup from "@/app/components/AvatarGroup";
 // import ConfirmModal from "./ConfirmModal";
 // import AvatarGroup from "@/app/components/AvatarGroup";
 // import useActiveList from "@/app/hooks/useActiveList";
@@ -47,10 +50,10 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
 
     return (
         <>
-            {/* <ConfirmModal
+            <ConfirmModal
                 isOpen={confirmOpen}
                 onClose={() => setConfirmOpen(false)}
-            /> */}
+            />
             <Transition show={isOpen} as={Fragment}>
                 <Dialog as="div" className="relative z-50" onClose={onClose}>
                     <TransitionChild
@@ -60,16 +63,15 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                         enterTo="opacity-100"
                         leave="ease-in duration-500"
                         leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                    >
-                        <div
-                            className="
-                fixed
-                inset-0
-                bg-black
-                bg-opacity-40
-              "/>
+                        leaveTo="opacity-0">
+                        <div className="
+                         fixed
+                         inset-0
+                       bg-black
+                         bg-opacity-40"/>
                     </TransitionChild>
+
+
 
                     <div
                         className="
@@ -164,9 +166,9 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                         ">
                                                     <div className="mb-2">
 
-                                                        {
-                                                            <Avatar user={otherUser} />
-                                                        }
+                                                        {data.isGroup ? (<AvatarGroup users={data.users} />) : <Avatar user={otherUser} />}
+
+
                                                     </div>
                                                     <div>
                                                         {title}
@@ -238,7 +240,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                                       sm:flex-shrink-0
                                     "
                                                                     >
-                                                                        Emails
+                                                                        Members
                                                                     </dt>
                                                                     <dd
                                                                         className="
@@ -248,7 +250,7 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                                       sm:col-span-2
                                     "
                                                                     >
-                                                                        {data.users.map((user) => user.email).join(', ')}
+                                                                        {data.users.map((user) => user.name).join(', ')}
                                                                     </dd>
                                                                 </div>
                                                             )}

@@ -2,7 +2,7 @@
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
-import Input from '../../components/inputs/input';
+import Input from '../../components/inputs/Input';
 import Button from '../../components/Button';
 import AuthSocialButton from './AuthSocialButton';
 import { BsGithub, BsGoogle } from 'react-icons/bs';

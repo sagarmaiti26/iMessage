@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/app/libs/prismadb";
 import { equal } from "assert";
 import { use } from "react";
+import { pusherServer } from "@/app/libs/pusher";
 export async function POST(
     request: Request
 ) {
@@ -38,6 +39,11 @@ export async function POST(
                 include: {
                     users: true
                 }
+            });
+            newConversation.users.forEach((user) => {
+                if (user.email) {
+                    pusherServer.trigger(user.email, 'conversation.new', newConversation)
+                }
             })
             return NextResponse.json(newConversation);
         }
@@ -56,29 +62,34 @@ export async function POST(
                 ]
             }
         })
-const singleConversation = existingConversations[0];
-if(singleConversation){
-    return NextResponse.json(singleConversation);
-}
-const newConversation = await prisma.conversation.create({
-    data:{
-        users:{
-            connect:[
-                {
-                    id:currentUser.id
-                },
-                {
-                    id:userId
-                }
-            ]
+        const singleConversation = existingConversations[0];
+        if (singleConversation) {
+            return NextResponse.json(singleConversation);
         }
-    },
-    include:{
-        users:true
-    }
-});
-return NextResponse.json(newConversation);
-     } catch (error: any) {
+        const newConversation = await prisma.conversation.create({
+            data: {
+                users: {
+                    connect: [
+                        {
+                            id: currentUser.id
+                        },
+                        {
+                            id: userId
+                        }
+                    ]
+                }
+            },
+            include: {
+                users: true
+            }
+        });
+        newConversation.users.map((user) => {
+            if (user.email) {
+                pusherServer.trigger(user.email, 'conversation:new', newConversation)
+            }
+        })
+        return NextResponse.json(newConversation);
+    } catch (error: any) {
         return new NextResponse('Internal Error', { status: 500 })
     }
 }
