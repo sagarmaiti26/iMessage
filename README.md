@@ -1,7 +1,3 @@
-Sure, here's a detailed README file for your project:
-
----
-
 # iMessage Clone
 
 An iOS-inspired messaging web application built using Next.js for the frontend and the backend, Node.js for Server side Runtime Environment and various other modern web technologies. This application provides real-time messaging, authentication via Google and GitHub, and several other features to enhance the user experience.
